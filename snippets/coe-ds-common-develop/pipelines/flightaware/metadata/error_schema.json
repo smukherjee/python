@@ -1,0 +1,17 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "description": "Error: indicates an error condition",
+   "properties": {
+      "type":{
+         "enum": [ "error"],
+         "description": "Message type: Value is always error"
+      },
+      "error_msg":{
+         "type":"string",
+         "description": "Error message: Details of the error encountered"
+      }
+   },
+   "required": ["type", "error_msg"],
+   "type":"object",
+   "additionalProperties": false
+}

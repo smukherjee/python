@@ -1,0 +1,22 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "description": "Keepalive: periodic heartbeat message generated at a specific interval",
+   "properties": {
+      "type":{
+         "enum": ["keepalive"],
+         "description": "Message type: Value is always keepalive"
+      },
+      "serverTime":{
+         "type":"string",
+         "description": "Server Time: POSIX epoch format. Current system time on the firehose server when the keepalive message was generated"
+      },
+      "pitr":{
+         "type":"string",
+         "description": "Point In Time Recovery: Timestamp value that should be supplied to the \"pitr\" connection initiation command when reconnecting and you wish to resume firehose playback at that approximate position"
+      }
+   },
+   "required": ["type", "serverTime", "pitr"],
+   "type":"object",
+   "additionalProperties": false
+
+}
