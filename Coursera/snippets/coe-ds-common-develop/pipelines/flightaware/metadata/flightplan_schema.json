@@ -1,0 +1,166 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "description": "Flightplan: a new or modified flightplan",
+   "definitions": {
+      "waypoint" : {
+         "description": "Waypoint Formatting: for waypoints and 4d_waypoints fields",
+         "properties": {
+            "lat":{
+               "type":"number",
+               "description": "Latitude: In decimal degrees"
+            },
+            "lon":{
+               "type":"number",
+               "description": "Longitude: In decimal degrees"
+            },
+            "clock":{
+               "type":"string",
+               "description": "Time: In POSIX epoch format"
+            },
+            "name":{
+               "type":"string",
+               "description": "Name: Airport, navaid, waypoint, intersection, or other identifier"
+            },
+            "alt":{
+               "type":"string",
+               "description": "Altitude: In feet (MSL)"
+            },
+            "gs":{
+               "type":"string",
+               "description": "Groundspeed: In knots"
+            }
+         },
+         "required": ["lat", "lon"]
+      }
+   },
+   "properties": {
+      "type":{
+         "enum": [ "flightplan"],
+         "description": "Message type: Value is always flightplan"
+      },
+      "ident":{
+         "type":"string",
+         "description": "Flight Identifier: Callsign identifying the flight. Typically, ICAO airline code plus IATA/ticketing flight number, or the aircraft registration."
+      },
+      "status":{
+         "enum": [ "S", "F", "A", "Z", "X"],
+         "description": "Flight Status: Single letter code for current flight status, can be S Scheduled, F Filed, A Active, Z Completed, or X Cancelled."
+      },
+      "orig":{
+         "type":"string",
+         "description": "Origin: ICAO airport code, waypoint, or latitude/longitude pair"
+      }, 
+      "dest":{
+         "type":"string",
+         "description": "Destination: ICAO airport code, waypoint, or latitude/longitude pair. May be missing if not known."
+      },
+      "fdt":{
+         "type":"string",
+         "description": "Filed Departure Time: Timestamp that was originally listed in the filed flight plan for the departure. POSIX epoch format"
+      },
+      "edt":{
+         "type":"string",
+         "description": "Estimated Departure Time: Revised timestamp of when the flight is expected to depart. POSIX epoch format"
+      },
+      "eta":{
+         "type":"string",
+         "description": "Estimated Arrival Time: POSIX epoch format"
+      },
+#if (VERSION >= 18)
+      "predicted_off":{
+         "type":"string",
+         "description": "Predicted Off: The predicted off (runway departure) time, if enabled for the account. (POSIX epoch format, Firehose version 18.0+)"
+      },
+      "predicted_on":{
+         "type":"string",
+         "description": "Predicted On: The predicted in (runway arrival) time, if enabled for the account. (POSIX epoch format, Firehose version 18.0+)"
+      },
+#elif (VERSION >= 11)
+      "computed_eta":{
+         "type":"string",
+         "description": "Predicted ETA: Timestamp of when the flight is predicted to arrive (If enabled for the account). POSIX epoch format. (Version 11.0-17.0, replaced by predicted_on in version 18.0)"
+      },
+      "computed_eta_source":{
+         "type":"string",
+         "description": "Predicted ETA Computational Method: Prediction method used for Predicted ETA. Emitted if feature enabled for the account. (Version 11.0-17.0, removed in version 18.0)"
+      },
+#endif
+      "ete":{
+         "type":"string",
+         "description": "En route Time: In seconds. May be missing if not known."
+      },
+      "id":{
+         "type":"string",
+         "description": "FlightAware flight id: Unique identifier associated with each flight (faFlightID)"
+      },
+      "pitr":{
+         "type":"string",
+         "description": "Point In Time Recovery: Timestamp value that should be supplied to the \"pitr\" connection initiation command when reconnecting and you wish to resume firehose playback at that approximate position"
+      },
+
+      "aircrafttype":{
+         "type":"string",
+         "description": "Aircraft Type: FAA or ICAO aircraft type code"
+      },
+      "reg":{
+         "type":"string",
+         "description": "Aircraft Registration: The tail number or registration of the aircraft, if known and it differs from the ident."
+      },
+      "speed":{
+         "type":"string",
+         "description": "Filed cruising speed: In knots"
+      },
+      "alt":{
+         "type":"string",
+         "description": "Cruising altitude: In feet (MSL). For flightplan messages occurring before the actual departure, this field will typically represent the filed initial cruising altitude in the flight plan. After departure, subsequent flightplan messages may contain an updated value in this field that reflects ATC approval of additional altitude clearances."
+      },
+      "facility_hash":{
+         "type":"string",
+         "description": "Reporting facility hash: A consistent and unique obfusticated identifier string for each source reporting positions to FlightAware"
+      },
+      "facility_name":{
+         "type":"string",
+         "description": "Reporting facility name: A description of the reporting facility intended for end-user consumption. May be a blank string if undefined."
+      },
+
+      "waypoints":{
+         "type": "array",
+         "items": {
+            "$ref": "#/definitions/waypoint"
+         },
+         "description": "Waypoints: 2D, 3D, or 4D list of locations, times, and altitudes formatted as a list of JSON arrays"
+      },
+      "route":{
+         "type":"string",
+         "description": "Text route: Textual route string"
+      },
+      "atcident":{
+         "type":"string",
+         "description": "ATC Ident: Identifier used for ATC, if it differs from flight identifier"
+      },
+      "lat":{
+         "type":"string",
+         "description": "Latitude: In decimal degrees"
+      },
+      "lon":{
+         "type":"string",
+         "description": "Longitude: In decimal degrees"
+      },
+      "gs":{
+         "type":"string",
+         "description": "Groundspeed: In knots"
+      },
+      "hexid":{
+         "type":"string",
+         "description": "Transponder Mode S code: 24-bit Mode S transponder code assigned by aircraft registrar. Formatted in upper case hexadecimal"
+      },
+      "trueCancel":{
+         "type":"string",
+         "description": "True Cancellation: Set to 1 when a confirmed flight cancellation was received from the airline. A value of 0 or lack of this field means that this is a presumed cancellation due to expiration or lack of data. (version 10.0+)"
+      }
+   },
+   "required": ["type", "ident", "status", "fdt", "id", "pitr"],
+   "type":"object",
+   "additionalProperties": false
+
+}
